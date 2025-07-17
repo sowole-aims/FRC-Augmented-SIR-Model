@@ -1,61 +1,38 @@
-
 # 🧠 FRC-Augmented SIR Model
 
-This repository contains the implementation of a **network-based SIR model** that integrates **Forman-Ricci Curvature (FRC)** into the disease transmission process. The approach enhances classical epidemiological modeling by incorporating **geometric features of complex networks**, enabling more accurate and topology-aware simulations.
+This repository contains the implementation of a **network-based SIR epidemic model** that incorporates **Forman-Ricci Curvature (FRC)** to modulate transmission rates over edges. It explores how network geometry influences disease spread dynamics.
 
 ---
 
-## 📌 Highlights
+## 📌 Key Features
 
-- ✅ Curvature-aware SIR simulation on network models (Erdős–Rényi, Watts–Strogatz, Barabási–Albert, Power-law Cluster)
-- ✅ **Sum-based** discrete-time dynamics
-- ✅ Computation of **Forman-Ricci curvature** on undirected graphs
-- ✅ Visualizations of infection spread across various topologies
-- ✅ Modular Python scripts & Jupyter notebook for full reproducibility
+- 📊 Simulates disease dynamics on multiple network topologies:
+  - Erdős–Rényi
+  - Watts–Strogatz
+  - Barabási–Albert
+  - Power-law Cluster
+- 🌐 Integrates Forman-Ricci curvature to modulate edge-based transmission
+- 📈 Visualizes SIR dynamics and infection curves over time
+- 🧪 Supports both **sum-based** and **product-based** discrete SIR formulations
 
 ---
 
 ## 🧪 Model Description
 
-This model augments the classical SIR model by incorporating Forman-Ricci curvature to modulate transmission rates over a network.
-
-For each edge `(u, v)` in the network, the transmission rate is adjusted based on curvature as follows:
+For each edge \((u, v)\) in the network, transmission rate is modulated by the curvature:
 
 ```
-
-β\_uv = β · exp(F\_uv)
-
+β_{uv} = β ⋅ exp(F_{uv})
 ```
 
-Where:
+where `F_{uv}` is the Forman-Ricci curvature of edge \((u,v)\).
 
-- `β` is the base transmission rate,
-- `F_uv` is the Forman-Ricci curvature of the edge `(u, v)`,
-- `β_uv` is the effective (curvature-adjusted) transmission rate.
-
----
-
-### 🔁 Node State Updates
-
-The model simulates a **discrete-time network-based SIR process**. Each node `v` updates its state over time `t` as follows:
+Node states are updated using the discrete-time SIR formulation:
 
 ```
-
-S\_v(t+1) = S\_v(t) · ∑\_{u ∈ N(v)} \[1 - β\_uv · I\_u(t)]
-
-I\_v(t+1) = S\_v(t) · \[1 - ∑\_{u ∈ N(v)} (1 - β\_uv · I\_u(t))] + (1 - γ) · I\_v(t)
-
-R\_v(t+1) = R\_v(t) + γ · I\_v(t)
-
-```
-
-Where:
-
-- `S_v(t)`, `I_v(t)`, and `R_v(t)` are the probabilities of node `v` being Susceptible, Infected, or Recovered at time `t`, respectively.
-- `γ` is the recovery rate.
-- `N(v)` is the set of neighboring nodes of `v`.
-
-This formulation allows curvature to dynamically influence transmission pathways, highlighting the role of network geometry in the spread of epidemics.
+S_v(t+1) = S_v(t) ⋅ ∑_{u ∈ N(v)} (1 - β_{uv} ⋅ I_u(t))
+I_v(t+1) = S_v(t) ⋅ [1 - ∑_{u ∈ N(v)} (1 - β_{uv} ⋅ I_u(t))] + (1 - γ) ⋅ I_v(t)
+R_v(t+1) = R_v(t) + γ ⋅ I_v(t)
 ```
 
 ---
@@ -74,6 +51,7 @@ FRC-Augmented-SIR-Model/
 │
 ├── notebook/
 │   ├── FRC_SIR_Simulation.ipynb  # Simulation and visualization notebook
+```
 
 ---
 
