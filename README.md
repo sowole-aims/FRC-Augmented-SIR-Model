@@ -13,7 +13,7 @@ This repository contains the implementation of a **network-based SIR epidemic mo
   - Power-law Cluster
 - 🌐 Integrates Forman-Ricci curvature to modulate edge-based transmission
 - 📈 Visualizes SIR dynamics and infection curves over time
-- 🧪 Supports both **sum-based** and **product-based** discrete SIR formulations
+- 🧪 Supports **sum-based** discrete SIR formulation
 
 ---
 
