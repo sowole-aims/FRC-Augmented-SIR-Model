@@ -33,6 +33,9 @@ Where:
 - `F_uv` is the Forman-Ricci curvature of the edge `(u, v)`,
 - `β_uv` is the effective (curvature-adjusted) transmission rate.
 
+---
+
+### 🔁 Node State Updates
 
 The model simulates a **discrete-time network-based SIR process**. Each node `v` updates its state over time `t` as follows:
 
@@ -54,6 +57,8 @@ Where:
 
 This formulation allows curvature to dynamically influence transmission pathways, highlighting the role of network geometry in the spread of epidemics.
 ```
+
+
 
 
 ---
