@@ -65,20 +65,19 @@ This formulation allows curvature to dynamically influence transmission pathways
 
 ## 📁 Repository Structure
 
-```
+```text
 FRC-Augmented-SIR-Model/
 │
-├── README.md
-├── requirements.txt
-├── LICENCE
+├── README.md                  # Project documentation
+├── requirements.txt           # Required dependencies
+├── LICENSE                    # Project license
 │
 ├── frc_lib/
-│   ├── forman_ricci.py          # FRC computation
+│   ├── forman_ricci.py        # FRC computation module
 │
 ├── notebook/
-│   ├── FRC_SIR_Simulation.ipynb
+│   ├── FRC_SIR_Simulation.ipynb  # Simulation and visualization notebook
 
-```
 
 ---
 
