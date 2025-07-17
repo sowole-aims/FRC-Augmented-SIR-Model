@@ -33,6 +33,7 @@ Where:
 - `F_uv` is the Forman-Ricci curvature of the edge `(u, v)`,
 - `β_uv` is the effective (curvature-adjusted) transmission rate.
 
+
 The model simulates a **discrete-time network-based SIR process**. Each node `v` updates its state over time `t` as follows:
 
 ```
