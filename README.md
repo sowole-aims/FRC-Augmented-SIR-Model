@@ -17,22 +17,43 @@ This repository contains the implementation of a **network-based SIR model** tha
 
 ## 🧪 Model Description
 
-For each edge \((u, v)\) in the network, transmission rate is modulated by the curvature:
-\[
-\beta_{uv} = \beta \cdot \exp(F_{uv}),
-\]
-where \(F_{uv}\) is the Forman-Ricci curvature of edge \((u,v)\).
+This model augments the classical SIR model by incorporating Forman-Ricci curvature to modulate transmission rates over a network.
 
-Node states are updated using the discrete-time SIR formulation:
-\[
-S_v(t+1) = S_v(t) \sum_{u \in \mathcal{N}(v)} \left(1 - \beta_{uv} I_u(t) \right)
-\]
-\[
-I_v(t+1) = S_v(t) \left[1 - \sum_{u \in \mathcal{N}(v)} \left(1 - \beta_{uv} I_u(t) \right) \right] + (1 - \gamma) I_v(t)
-\]
-\[
-R_v(t+1) = R_v(t) + \gamma I_v(t)
-\]
+For each edge `(u, v)` in the network, the transmission rate is adjusted based on curvature as follows:
+
+```
+
+β\_uv = β · exp(F\_uv)
+
+```
+
+Where:
+
+- `β` is the base transmission rate,
+- `F_uv` is the Forman-Ricci curvature of the edge `(u, v)`,
+- `β_uv` is the effective (curvature-adjusted) transmission rate.
+
+The model simulates a **discrete-time network-based SIR process**. Each node `v` updates its state over time `t` as follows:
+
+```
+
+S\_v(t+1) = S\_v(t) · ∑\_{u ∈ N(v)} \[1 - β\_uv · I\_u(t)]
+
+I\_v(t+1) = S\_v(t) · \[1 - ∑\_{u ∈ N(v)} (1 - β\_uv · I\_u(t))] + (1 - γ) · I\_v(t)
+
+R\_v(t+1) = R\_v(t) + γ · I\_v(t)
+
+```
+
+Where:
+
+- `S_v(t)`, `I_v(t)`, and `R_v(t)` are the probabilities of node `v` being Susceptible, Infected, or Recovered at time `t`, respectively.
+- `γ` is the recovery rate.
+- `N(v)` is the set of neighboring nodes of `v`.
+
+This formulation allows curvature to dynamically influence transmission pathways, highlighting the role of network geometry in the spread of epidemics.
+```
+
 
 ---
 
