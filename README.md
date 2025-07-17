@@ -58,9 +58,6 @@ Where:
 This formulation allows curvature to dynamically influence transmission pathways, highlighting the role of network geometry in the spread of epidemics.
 ```
 
-
-
-
 ---
 
 ## 📁 Repository Structure
@@ -77,7 +74,6 @@ FRC-Augmented-SIR-Model/
 │
 ├── notebook/
 │   ├── FRC_SIR_Simulation.ipynb  # Simulation and visualization notebook
-
 
 ---
 
