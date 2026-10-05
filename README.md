@@ -1,252 +1,309 @@
-# 🧠 FRC-Augmented SIR Model
+# FRC-Augmented SIR Model
 
-A network-based epidemic modelling framework that incorporates **Forman–Ricci curvature (FRC)** into edge-level transmission dynamics.
+A stochastic network-based epidemic modelling framework that incorporates **Forman–Ricci curvature (FRC)** into edge-level transmission dynamics.
 
-The repository contains the computational implementation and experimental notebooks used to investigate how local network structure and curvature-dependent transmission heterogeneity affect epidemic dynamics across synthetic and empirical contact networks.
-
----
-
-## 🔬 Overview
-
-Traditional network-SIR models represent transmission primarily through network connectivity and edge weights. This project extends that formulation by using **Forman–Ricci curvature** as a structural descriptor of individual edges.
-
-The framework separates the baseline transmission scale from curvature-driven heterogeneity. For an edge \((i,j)\),
-
-```text
-βᵢⱼ = β₀ wᵢⱼ ĝα(F̃ᵢⱼ)
-```
-
-where:
-
-- `β₀` is the baseline transmission parameter;
-- `wᵢⱼ` is the normalized edge weight;
-- `F̃ᵢⱼ` is standardized Forman–Ricci curvature;
-- `α` controls the strength of curvature-dependent heterogeneity;
-- `ĝα(·)` is a mean-normalized curvature-to-transmission mapping.
-
-The normalization is designed so that the curvature modulation changes the **distribution of transmission across edges without unintentionally changing the weighted baseline transmission scale**.
+This repository contains the computational implementation and experimental notebooks used to study how local network structure and curvature-dependent transmission heterogeneity affect epidemic dynamics across synthetic and empirical contact networks.
 
 ---
 
-## ✨ Key Features
+## Overview
 
-- 🕸️ **Network-based SIR modelling**
-- 📐 **Forman–Ricci curvature** computation on network edges
-- 🔗 Support for weighted and unweighted networks
-- 🧮 Standardization of edge-level curvature
-- 🔄 Multiple curvature-to-transmission mappings:
+Traditional network-SIR models represent transmission through network connectivity and, where available, edge weights. This framework extends the weighted Network-SIR formulation by using **Forman–Ricci curvature** as an edge-level structural descriptor.
+
+For an edge \(e_{ij}=(i,j)\), the curvature-aware transmission coefficient is
+
+$$
+\beta_{ij}
+=
+\beta_0\,w_{ij}\,
+\widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right),
+$$
+
+where
+
+- \(\beta_0\) is the baseline transmission parameter;
+- \(w_{ij}\) is the normalized edge weight;
+- \(\widetilde{F}_{ij}\) is the standardized Forman–Ricci curvature;
+- \(\alpha\) controls the strength of curvature-dependent heterogeneity; and
+- \(\widehat{g}_{\alpha}(\cdot)\) is a mean-normalized curvature-to-transmission mapping.
+
+The normalization is constructed so that curvature changes the **distribution of transmission intensity across edges without unintentionally changing the mean weighted transmission scale**.
+
+---
+
+## Key Features
+
+- Network-based stochastic SIR modelling
+- Edge-level Forman–Ricci curvature computation
+- Weighted and unweighted network support
+- Standardization of edge curvature
+- Four curvature-to-transmission mappings:
   - Uniform
   - Linear
   - Exponential
   - Saturating
-- 🎚️ Curvature-strength sensitivity analysis through `α`
-- 📈 Baseline transmission sensitivity analysis through `β₀`
-- 🎲 Repeated stochastic simulations with matched random seeds
-- 📊 Epidemic outcome analysis using:
-  - Peak infected
-  - Peak time
-  - Final epidemic size
-  - Epidemic duration
-- 📉 Uncertainty analysis and confidence intervals
-- 🧪 Validation across multiple synthetic network topologies
-- 🏫 Evaluation on an empirical high-school contact network
-- 📦 Export of experiment summaries and figures for reproducibility
+- Curvature-strength sensitivity through \(\alpha\)
+- Baseline-transmission sensitivity through \(\beta_0\)
+- Repeated stochastic simulations with matched random seeds
+- Fixed-network and across-network-realisation uncertainty analysis
+- Epidemic outcome analysis using peak prevalence, peak time, final epidemic size, and epidemic duration
+- Evaluation on four synthetic network families
+- Structural validation on an empirical high-school contact network
+- Export of numerical summaries and figures for reproducibility
 
 ---
 
-## 🕸️ Network Topologies
+## Network Topologies
 
 The synthetic experiments use four structurally distinct network families:
 
 | Network | Structural role |
-|---|---|
+| --- | --- |
 | **Erdős–Rényi (ER)** | Random, relatively homogeneous connectivity |
-| **Watts–Strogatz (WS)** | Small-world structure and local clustering |
+| **Watts–Strogatz (WS)** | Small-world structure with local clustering |
 | **Barabási–Albert (BA)** | Hub-dominated scale-free connectivity |
-| **Power-Law Cluster (PLC)** | Scale-free structure with enhanced clustering |
+| **Power-Law Cluster (PLC)** | Scale-free structure with enhanced triadic closure |
 
-The synthetic experiments use approximately 1,000 nodes per network and compare the same network realization across competing model conditions.
+The principal synthetic experiments use approximately 1,000 nodes per network. Competing model conditions are evaluated on the same fixed network realisation. A separate experiment uses independent network realisations to quantify structural variability.
 
 ---
 
-## 🏫 Empirical Contact Network
+## Empirical Contact Network
 
-The repository also contains an empirical-network experiment based on the **SocioPatterns high-school contact dataset**.
-
-The aggregated contact network contains:
+The empirical analysis uses the **SocioPatterns high-school contact dataset**. After aggregating the temporal contacts, the resulting weighted network contains:
 
 - **327 individuals**
 - **5,818 undirected edges**
-- **20-second temporal resolution** in the original contact records
-- Contact duration as the primary edge-weight measure
-- Maximum-weight normalization of edge weights
+- contacts originally recorded at **20-second resolution**
+- cumulative contact duration as the edge-weight measure
+- edge weights normalized by the maximum observed contact duration
 
-Because contact duration is directly proportional to the number of recorded 20-second contact intervals, duration and contact count are not treated as independent weighting sensitivities.
+Because cumulative duration is directly proportional to the number of recorded 20-second contact intervals, contact duration and contact count are not treated as independent weighting sensitivities.
 
 The empirical experiment is used as a **structural validation of the modelling mechanism**, not as predictive validation against an observed epidemic trajectory.
 
 ---
 
-## 🧮 Model Formulation
+## Model Formulation
 
-### Standardized Forman–Ricci curvature
+### 1. Standardized Forman–Ricci curvature
 
-For an edge \(e=(i,j)\), the computed curvature is standardized before it is used to modulate transmission:
+For each edge \(e_{ij}\), the computed curvature \(F_{ij}\) is standardized before being used to modulate transmission:
 
-```text
-F̃ᵢⱼ = (Fᵢⱼ − μF) / σF
-```
+$$
+\widetilde{F}_{ij}
+=
+\frac{F_{ij}-\mu_F}{\sigma_F},
+$$
 
-This places curvature values on a common scale across network realizations.
+where \(\mu_F\) and \(\sigma_F\) are the mean and standard deviation of the edge-curvature distribution, respectively.
 
-### Curvature-to-transmission mappings
+This transformation places curvature values on a common standardized scale.
 
-The framework evaluates several mappings.
+### 2. Curvature-to-transmission mappings
 
-#### 1. Uniform mapping
+Let
 
-```text
-g(x) = 1
-```
+$$
+x_{ij}=\widetilde{F}_{ij}.
+$$
 
-This corresponds to the weighted Network-SIR baseline.
+The framework evaluates four mappings.
 
-#### 2. Linear mapping
+#### Uniform
 
-```text
-g(x) = max(ε, 1 + αx)
-```
+$$
+g_{\alpha}(x)=1.
+$$
 
-A small positivity floor `ε` prevents non-positive transmission modifiers.
+This is the curvature-free weighted Network-SIR reference.
 
-#### 3. Exponential mapping
+#### Linear
 
-```text
-g(x) = exp(αx)
-```
+$$
+g_{\alpha}(x)
+=
+\max\!\left(\varepsilon,\,1+\alpha x\right),
+$$
 
-The exponential mapping provides a smooth multiplicative transformation of standardized curvature.
+where \(\varepsilon>0\) is a small positivity floor that prevents non-positive transmission modifiers.
 
-#### 4. Saturating mapping
+#### Exponential
 
-```text
-g(x) = 1 + tanh(αx)
-```
+$$
+g_{\alpha}(x)
+=
+\exp(\alpha x).
+$$
 
-This limits the magnitude of curvature-induced modulation.
+#### Saturating
 
-### Mean-normalized modulation
+$$
+g_{\alpha}(x)
+=
+1+\tanh(\alpha x).
+$$
 
-For each mapping, the raw modifier is normalized so that its **edge-weighted mean equals one**:
+The alternative mappings are used to assess whether the observed epidemic response depends critically on a particular curvature-to-transmission transformation.
 
-```text
-ĝα(Fᵢⱼ) =
-    gα(F̃ᵢⱼ)
-    ─────────────────────────────────────────────
-    Σ₍ₖ,ₗ₎ wₖₗ gα(F̃ₖₗ) / Σ₍ₖ,ₗ₎ wₖ
-```
+### 3. Mean-normalized modulation
 
-The resulting transmission coefficient is therefore:
+For weighted networks, the raw modifier is normalized by its edge-weighted mean:
 
-```text
-βᵢⱼ = β₀ wᵢⱼ ĝα(F̃ᵢⱼ)
-```
+$$
+\widehat{g}_{\alpha}(x_{ij})
+=
+\frac{
+g_{\alpha}(x_{ij})
+}{
+\displaystyle
+\frac{
+\sum_{(k,l)\in E} w_{kl}\,g_{\alpha}(x_{kl})
+}{
+\sum_{(k,l)\in E} w_{kl}
+}
+}.
+$$
 
-At `α = 0`, the modulation is exactly one and the model reduces to the weighted Network-SIR baseline:
+Equivalently,
 
-```text
-βᵢⱼ = β₀ wᵢⱼ
-```
+$$
+\frac{
+\sum_{(i,j)\in E}
+w_{ij}\widehat{g}_{\alpha}(x_{ij})
+}{
+\sum_{(i,j)\in E}w_{ij}
+}
+=1.
+$$
 
-This makes `α` a direct control on curvature-driven transmission heterogeneity.
+For the unweighted synthetic networks, \(w_{ij}=1\), so this reduces to ordinary arithmetic-mean normalization.
+
+The edge-level transmission coefficient is then
+
+$$
+\boxed{
+\beta_{ij}
+=
+\beta_0 w_{ij}
+\widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right)
+}.
+$$
+
+At \(\alpha=0\),
+
+$$
+\widehat{g}_{0}\!\left(\widetilde{F}_{ij}\right)=1,
+$$
+
+and therefore
+
+$$
+\beta_{ij}=\beta_0w_{ij},
+$$
+
+so the curvature-aware model is nested within the weighted Network-SIR baseline.
+
+### 4. Infection probability
+
+For a susceptible node \(i\) connected to an infectious neighbour \(j\), the one-step transmission probability is
+
+$$
+p_{ij}^{\mathrm{inf}}
+=
+1-\exp\!\left[
+-\beta_0 w_{ij}
+\widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right)
+\Delta t
+\right].
+$$
+
+For all infectious neighbours of \(i\), the infection probability becomes
+
+$$
+p_i^{\mathrm{inf}}(t)
+=
+1-
+\prod_{j\in\mathcal{N}(i)}
+\left(1-p_{ij}^{\mathrm{inf}}\right)^{I_j(t)}.
+$$
+
+The stochastic implementation samples infection and recovery transitions as Bernoulli events.
 
 ---
 
-## 🧪 Experimental Design
+## Experimental Design
 
-The revised experimental workflow is organized into six experiments.
+The computational workflow is organized into six experiments.
 
-### Experiment 1: Structural characterization
+### Experiment 1 — Structural Characterisation
 
-Characterizes the four synthetic networks using:
+Characterises the four synthetic network families using network size, edge count, degree, clustering, edge-level Forman–Ricci curvature, curvature distributions, and relationships between curvature and conventional network descriptors.
 
-- network size and edge count;
-- degree;
-- clustering;
-- edge-level Forman–Ricci curvature;
-- curvature distributions;
-- relationships between curvature and classical network descriptors.
+### Experiment 2 — Network-SIR vs Curvature-SIR
 
-### Experiment 2: Network-SIR vs Curvature-SIR
+Compares the weighted Network-SIR baseline with the curvature-aware formulation under matched network structure, initialisation, epidemiological parameters, and stochastic seeds.
 
-Compares the weighted Network-SIR baseline with the curvature-aware formulation using the same network realization and stochastic simulation protocol.
+### Experiment 3 — Mapping Robustness
 
-### Experiment 3: Mapping robustness
+Compares the **uniform**, **linear**, **exponential**, and **saturating** mappings under otherwise matched conditions.
 
-Tests whether the observed epidemic response depends specifically on the exponential mapping by comparing:
+### Experiment 4 — Parameter Sensitivity
 
-- Uniform
-- Linear
-- Exponential
-- Saturating
+Curvature strength is evaluated over
 
-mappings under otherwise matched conditions.
+$$
+\alpha\in\{0,\;0.25,\;0.5,\;0.75,\;1,\;1.5,\;2\},
+$$
 
-### Experiment 4: Parameter sensitivity
+and the synthetic baseline transmission parameter over
 
-Investigates:
+$$
+\beta_0\in\{0.2,\;0.3,\;0.4,\;0.5,\;0.6\}.
+$$
 
-- curvature strength `α`;
-- baseline transmission `β₀`.
+### Experiment 5 — Stochastic and Network-Realisation Variability
 
-The current synthetic sensitivity grid includes:
+Two sources of uncertainty are evaluated separately:
 
-```text
-α = {0, 0.25, 0.5, 0.75, 1, 1.5, 2}
-```
+1. **Within-network stochastic variability:** 200 stochastic epidemic realisations on each fixed synthetic network for the principal comparisons.
+2. **Across-network-realisation variability:** 20 independent network realisations per topology, with 20 paired epidemic simulations on each network realisation.
 
-and:
+This separation distinguishes epidemic-event variability conditional on a fixed network from variability caused by the generated network structure itself.
 
-```text
-β₀ = {0.2, 0.3, 0.4, 0.5, 0.6}
-```
+### Experiment 6 — Empirical High-School Network Validation
 
-### Experiment 5: tochastic variability
+The empirical analysis evaluates:
 
-Uses repeated stochastic simulations to quantify variability in epidemic outcomes rather than relying on a single epidemic trajectory.
-
-The revised synthetic experiments use **200 stochastic realisations** for the principal comparisons.
-
-### Experiment 6: Empirical network validation
-
-Applies the framework to the aggregated high-school contact network and evaluates:
-
-- weighted Network-SIR vs Curvature-SIR;
+- weighted Network-SIR versus Curvature-SIR;
+- endpoint-strength control;
+- endpoint-degree control;
+- shuffled-FRC control;
 - mapping robustness;
 - curvature-strength sensitivity;
-- stochastic outcome distributions;
-- the operating behaviour of the positivity-constrained linear mapping.
+- stochastic outcome distributions; and
+- clipping behaviour of the positivity-constrained linear mapping.
+
+For each empirical model condition, the principal analysis uses **200 paired stochastic realisations**.
 
 ---
 
-## 📊 Main Epidemic Metrics
+## Epidemic Outcome Metrics
 
 The experiments report four principal outcomes:
 
-| Metric | Description |
-|---|---|
+| Metric | Definition |
+| --- | --- |
 | **Peak infected** | Maximum number of simultaneously infected individuals |
-| **Peak time** | Time at which peak infection occurs |
-| **Final epidemic size** | Total number of individuals infected by the end of the simulation |
-| **Epidemic duration** | Time until the epidemic reaches extinction |
+| **Peak time** | Time at which the infection peak occurs |
+| **Final epidemic size** | Total number infected by the end of the simulation |
+| **Epidemic duration** | Time from epidemic initiation until extinction |
 
-For stochastic experiments, distributions, standard deviations, and confidence intervals are also reported where appropriate.
+For stochastic experiments, the analysis also reports uncertainty summaries such as means, standard deviations, distributions, and confidence intervals where appropriate.
 
 ---
 
-## 📁 Repository Structure
-
-The repository is organized around the curvature computation library and the experimental notebooks.
+## Repository Structure
 
 ```text
 FRC-Augmented-SIR-Model/
@@ -264,12 +321,12 @@ FRC-Augmented-SIR-Model/
 │
 └── data/
     ├── High-School_data_2013.csv
-│   └── metadata_2013.txt
+    └── metadata_2013.txt
 ```
 
 ---
 
-## 🛠️ Installation
+## Installation
 
 Clone the repository:
 
@@ -278,13 +335,13 @@ git clone https://github.com/sowole-aims/FRC-Augmented-SIR-Model.git
 cd FRC-Augmented-SIR-Model
 ```
 
-Install the required Python packages:
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-For notebook-based execution, ensure that Jupyter is installed:
+For notebook-based execution, install Jupyter if needed:
 
 ```bash
 pip install jupyter
@@ -292,7 +349,7 @@ pip install jupyter
 
 ---
 
-## ▶️ Usage
+## Usage
 
 Launch Jupyter:
 
@@ -300,48 +357,48 @@ Launch Jupyter:
 jupyter notebook
 ```
 
-Then open the relevant notebook from the `notebook/` directory.
+Then open the appropriate notebook from `notebook/`:
 
-For the synthetic-network experiments, use the `FRC_SIR_Simulation` notebook.
+- `FRC_SIR_Simulation.ipynb` — synthetic-network experiments
+- `aggregated_weighted_network_complete_revised.ipynb` — empirical high-school contact-network experiments
 
-For the empirical high-school contact-network experiment, use the `aggregated_weighted_network_complete_revised` notebook.
-
-Before reproducing the manuscript results, run the notebook from the beginning so that the network realizations, random seeds, model configuration, and exported results remain internally consistent.
-
----
-
-## 🔁 Reproducibility
-
-The experiments use explicit random seeds and matched stochastic replicates for direct model comparisons.
-
-Important reproducibility principles include:
-
-1. **Freeze the network realization** before comparing model conditions.
-2. Use the **same initialisation protocol** for competing models.
-3. Use **matched random seeds** for paired comparisons where appropriate.
-4. Keep the epidemiological parameters fixed when evaluating mapping robustness.
-5. Record the curvature mapping and normalization used for every experiment.
-6. Verify that `α = 0` reproduces the weighted Network-SIR baseline.
-7. Export experiment configuration and summary results alongside figures.
-
-These controls are intended to distinguish structural model effects from differences caused by network generation or Monte Carlo variability.
+For reproducibility, run the selected notebook from the beginning so that network generation, random seeds, model configuration, simulations, and exported outputs remain internally consistent.
 
 ---
 
-## 📈 Outputs
+## Reproducibility
 
-The analysis produces figures and tables for:
+The experiments use explicit random seeds and matched stochastic replicates where direct model comparisons are required.
+
+Important reproducibility principles are:
+
+1. Freeze the network realisation before comparing model conditions in fixed-network experiments.
+2. Use the same initialisation protocol across competing models.
+3. Use matched random seeds for paired comparisons.
+4. Keep epidemiological parameters fixed when evaluating mapping robustness.
+5. Record the curvature mapping and normalization used in each experiment.
+6. Verify that \(\alpha=0\) reproduces the weighted Network-SIR baseline.
+7. Treat fixed-network stochastic variability separately from across-network-realisation variability.
+8. Export experiment configuration and numerical summaries alongside figures.
+
+These controls help distinguish curvature-dependent structural effects from differences caused by network generation or Monte Carlo variability.
+
+---
+
+## Outputs
+
+The analysis produces numerical summaries and figures for:
 
 - synthetic-network structural characterisation;
-- baseline vs curvature-aware epidemic dynamics;
+- baseline versus curvature-aware epidemic dynamics;
 - mapping robustness;
 - curvature-strength sensitivity;
 - baseline-transmission sensitivity;
-- stochastic outcome distributions;
-- uncertainty bands;
-- empirical-network validation.
+- within-network stochastic variability;
+- across-network-realisation variability;
+- empirical-network controls and validation.
 
-Representative output files include:
+Representative figure files include:
 
 ```text
 experiment2_baseline_vs_curvature.png
@@ -363,60 +420,53 @@ CSV exports contain the corresponding numerical experiment summaries.
 
 ---
 
-## ⚠️ Scope and Limitations
+## Scope and Limitations
 
-The framework is intended to study the **structural role of network curvature in epidemic dynamics**.
+This framework is designed to investigate the **structural role of network curvature in epidemic dynamics**.
 
 The current experiments do **not** establish:
 
 - predictive superiority over conventional epidemic models;
-- an empirically validated universal curvature-to-transmission law;
+- a universally valid curvature-to-transmission relationship;
+- independence of Forman–Ricci curvature from conventional network statistics;
 - a universal epidemiological threshold;
-- direct effectiveness of vaccination, contact tracing, mobility restrictions, or other interventions;
+- the effectiveness of specific interventions such as vaccination or contact tracing; or
 - real-time epidemic forecasting capability.
 
-The empirical high-school experiment uses one aggregated contact network and does not calibrate the model against an observed epidemic trajectory.
+For the unweighted synthetic networks, Forman–Ricci curvature is deterministically related to endpoint degree. The synthetic experiments should therefore be interpreted as analyses of the curvature-based transmission construction across different network architectures, rather than evidence that curvature provides information independent of degree.
 
-The curvature-to-transmission mappings remain phenomenological. The mapping-robustness experiments show that the qualitative effect is not restricted to the exponential mapping, but they do not determine which mapping is epidemiologically correct.
+The empirical analysis uses one aggregated high-school contact network and does not calibrate the model against an observed epidemic trajectory. It is therefore interpreted as a structural sensitivity analysis rather than predictive validation.
+
+The curvature-to-transmission mappings are phenomenological. Mapping-robustness experiments test sensitivity to the assumed functional form but do not determine which mapping is epidemiologically correct.
 
 ---
 
-## 📚 Publications
+## Publications
 
-### Published work
-
-The curvature-based epidemic modelling work has been published in *Mathematics*:
+### Published Work
 
 **Sowole, O. S., Bragazzi, N. L., & Lyakurwa, G. A. (2025).**  
 *Analysing Disease Spread on Complex Networks Using Forman–Ricci Curvature.*  
-**Mathematics, 13(23), 3742.**
+**Mathematics, 13**(23), 3742.  
+DOI: https://doi.org/10.3390/math13233742
 
-DOI:
-
-https://doi.org/10.3390/math13233742
-
-The computational framework in this repository extends the earlier work with additional stochastic validation, alternative curvature-to-transmission mappings, parameter sensitivity analyses, and empirical contact-network experiments.
+The computational framework in this repository extends the earlier work through additional stochastic validation, alternative curvature-to-transmission mappings, parameter-sensitivity analyses, and empirical contact-network experiments.
 
 ---
 
-## 📖 Related Dataset
+## Related Dataset
 
 The empirical contact-network experiment uses the SocioPatterns high-school contact data described by:
 
-> Fournet, J., & Barrat, A. (2014). Contact patterns among high school students. *PLoS ONE, 9*(9), e107878.
-
-DOI:
-
-https://doi.org/10.1371/journal.pone.0107878
+> Fournet, J., & Barrat, A. (2014). Contact patterns among high school students. *PLoS ONE, 9*(9), e107878. https://doi.org/10.1371/journal.pone.0107878
 
 The dataset is used for research purposes in accordance with its original distribution and licensing conditions.
 
 ---
 
-## 📜 Citation
+## Citation
 
-If you use this repository or the associated computational framework in your
-research, please cite the following manuscript:
+If you use this repository or the associated computational framework in your research, please cite the manuscript:
 
 ```bibtex
 @article{Sowole2026CurvatureAwareSIR,
@@ -426,6 +476,7 @@ research, please cite the following manuscript:
   year    = {2026},
   note    = {Manuscript submitted for publication}
 }
+```
 
 For work specifically using the experimental implementation, please also cite this repository:
 
@@ -441,15 +492,13 @@ For work specifically using the experimental implementation, please also cite th
 
 ---
 
-## 📬 Contact
+## Contact
 
-**Oladimeji Samuel Sowole**
+**Oladimeji Samuel Sowole**  
+Email: `osowole@aimsric.org`
 
-- Email: `osowole@aimsric.org`
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **Apache License 2.0**.
-
-See [`LICENSE`](LICENSE) for the full license text.
+This project is licensed under the **Apache License 2.0**. See [`LICENSE`](LICENSE) for the full license text.
