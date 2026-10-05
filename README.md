@@ -10,7 +10,7 @@ This repository contains the computational implementation and experimental noteb
 
 Traditional network-SIR models represent transmission through network connectivity and, where available, edge weights. This framework extends the weighted Network-SIR formulation by using **Forman–Ricci curvature** as an edge-level structural descriptor.
 
-For an edge \(e_{ij}=(i,j)\), the curvature-aware transmission coefficient is
+For an edge $e_{ij}=(i,j)$, the curvature-aware transmission coefficient is
 
 $$
 \beta_{ij}
@@ -21,11 +21,11 @@ $$
 
 where
 
-- \(\beta_0\) is the baseline transmission parameter;
-- \(w_{ij}\) is the normalized edge weight;
-- \(\widetilde{F}_{ij}\) is the standardized Forman–Ricci curvature;
-- \(\alpha\) controls the strength of curvature-dependent heterogeneity; and
-- \(\widehat{g}_{\alpha}(\cdot)\) is a mean-normalized curvature-to-transmission mapping.
+- $\beta_0$ is the baseline transmission parameter;
+- $w_{ij}$ is the normalized edge weight;
+- $\widetilde{F}_{ij}$ is the standardized Forman–Ricci curvature;
+- $\alpha$ controls the strength of curvature-dependent heterogeneity; and
+- $\widehat{g}_{\alpha}(\cdot)$ is a mean-normalized curvature-to-transmission mapping.
 
 The normalization is constructed so that curvature changes the **distribution of transmission intensity across edges without unintentionally changing the mean weighted transmission scale**.
 
@@ -42,8 +42,8 @@ The normalization is constructed so that curvature changes the **distribution of
   - Linear
   - Exponential
   - Saturating
-- Curvature-strength sensitivity through \(\alpha\)
-- Baseline-transmission sensitivity through \(\beta_0\)
+- Curvature-strength sensitivity through $\alpha$
+- Baseline-transmission sensitivity through $\beta_0$
 - Repeated stochastic simulations with matched random seeds
 - Fixed-network and across-network-realisation uncertainty analysis
 - Epidemic outcome analysis using peak prevalence, peak time, final epidemic size, and epidemic duration
@@ -88,7 +88,8 @@ The empirical experiment is used as a **structural validation of the modelling m
 
 ### 1. Standardized Forman–Ricci curvature
 
-For each edge \(e_{ij}\), the computed curvature \(F_{ij}\) is standardized before being used to modulate transmission:
+For each edge $e_{ij}$, the computed curvature $F_{ij}$ is standardized before being used to modulate transmission:
+
 
 $$
 \widetilde{F}_{ij}
@@ -96,7 +97,7 @@ $$
 \frac{F_{ij}-\mu_F}{\sigma_F},
 $$
 
-where \(\mu_F\) and \(\sigma_F\) are the mean and standard deviation of the edge-curvature distribution, respectively.
+where $\mu_F$ and $\sigma_F$ are the mean and standard deviation of the edge-curvature distribution, respectively.
 
 This transformation places curvature values on a common standardized scale.
 
@@ -126,7 +127,7 @@ g_{\alpha}(x)
 \max\!\left(\varepsilon,\,1+\alpha x\right),
 $$
 
-where \(\varepsilon>0\) is a small positivity floor that prevents non-positive transmission modifiers.
+where $\varepsilon>0$ is a small positivity floor that prevents non-positive transmission modifiers.
 
 #### Exponential
 
@@ -177,9 +178,10 @@ w_{ij}\widehat{g}_{\alpha}(x_{ij})
 =1.
 $$
 
-For the unweighted synthetic networks, \(w_{ij}=1\), so this reduces to ordinary arithmetic-mean normalization.
+For the unweighted synthetic networks, $w_{ij}=1$, so this reduces to ordinary arithmetic-mean normalization.
 
 The edge-level transmission coefficient is then
+
 
 $$
 \boxed{
@@ -206,7 +208,8 @@ so the curvature-aware model is nested within the weighted Network-SIR baseline.
 
 ### 4. Infection probability
 
-For a susceptible node \(i\) connected to an infectious neighbour \(j\), the one-step transmission probability is
+For a susceptible node $i$ connected to an infectious neighbour $j$, the one-step transmission probability is
+
 
 $$
 p_{ij}^{\mathrm{inf}}
@@ -218,7 +221,8 @@ p_{ij}^{\mathrm{inf}}
 \right].
 $$
 
-For all infectious neighbours of \(i\), the infection probability becomes
+For all infectious neighbours of $i$, the infection probability becomes
+
 
 $$
 p_i^{\mathrm{inf}}(t)
@@ -383,40 +387,6 @@ Important reproducibility principles are:
 
 These controls help distinguish curvature-dependent structural effects from differences caused by network generation or Monte Carlo variability.
 
----
-
-## Outputs
-
-The analysis produces numerical summaries and figures for:
-
-- synthetic-network structural characterisation;
-- baseline versus curvature-aware epidemic dynamics;
-- mapping robustness;
-- curvature-strength sensitivity;
-- baseline-transmission sensitivity;
-- within-network stochastic variability;
-- across-network-realisation variability;
-- empirical-network controls and validation.
-
-Representative figure files include:
-
-```text
-experiment2_baseline_vs_curvature.png
-experiment3_mapping_comparison.png
-experiment4_alpha_peak.png
-experiment4_alpha_final_size.png
-experiment4_alpha_peak_time.png
-experiment4_beta_peak.png
-experiment5_peak_distributions.png
-experiment5_uncertainty_bands.png
-
-Figure_E6_Baseline_vs_Curvature_CI.png
-Figure_E6_Alpha_Sensitivity.png
-Figure_E6_Mapping_Robustness.png
-Figure_E6_Boxplots.png
-```
-
-CSV exports contain the corresponding numerical experiment summaries.
 
 ---
 
