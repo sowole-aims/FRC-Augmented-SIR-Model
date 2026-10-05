@@ -12,12 +12,9 @@ Traditional network-SIR models represent transmission through network connectivi
 
 For an edge $e_{ij}=(i,j)$, the curvature-aware transmission coefficient is
 
-$$
-\beta_{ij}
-=
+$$\beta_{ij} =
 \beta_0\,w_{ij}\,
-\widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right),
-$$
+\widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right),$$
 
 where
 
@@ -91,11 +88,8 @@ The empirical experiment is used as a **structural validation of the modelling m
 For each edge $e_{ij}$, the computed curvature $F_{ij}$ is standardized before being used to modulate transmission:
 
 
-$$
-\widetilde{F}_{ij}
-=
-\frac{F_{ij}-\mu_F}{\sigma_F},
-$$
+$$\widetilde{F}_{ij} =
+\frac{F_{ij}-\mu_F}{\sigma_F},$$
 
 where $\mu_F$ and $\sigma_F$ are the mean and standard deviation of the edge-curvature distribution, respectively.
 
@@ -121,29 +115,18 @@ This is the curvature-free weighted Network-SIR reference.
 
 #### Linear
 
-$$
-g_{\alpha}(x)
-=
-\max\!\left(\varepsilon,\,1+\alpha x\right),
-$$
+$$g_{\alpha}(x) =
+\max\!\left(\varepsilon,\,1+\alpha x\right),$$
 
 where $\varepsilon>0$ is a small positivity floor that prevents non-positive transmission modifiers.
 
 #### Exponential
 
-$$
-g_{\alpha}(x)
-=
-\exp(\alpha x).
-$$
+$$g_{\alpha}(x) = \exp(\alpha x).$$
 
 #### Saturating
 
-$$
-g_{\alpha}(x)
-=
-1+\tanh(\alpha x).
-$$
+$$g_{\alpha}(x) = 1+\tanh(\alpha x).$$
 
 The alternative mappings are used to assess whether the observed epidemic response depends critically on a particular curvature-to-transmission transformation.
 
@@ -151,8 +134,7 @@ The alternative mappings are used to assess whether the observed epidemic respon
 
 For weighted networks, the raw modifier is normalized by its edge-weighted mean:
 
-$$
-\widehat{g}_{\alpha}(x_{ij})
+$$\widehat{g}_{\alpha}(x_{ij})
 =
 \frac{
 g_{\alpha}(x_{ij})
@@ -163,8 +145,7 @@ g_{\alpha}(x_{ij})
 }{
 \sum_{(k,l)\in E} w_{kl}
 }
-}.
-$$
+}.$$
 
 Equivalently,
 
@@ -211,15 +192,13 @@ so the curvature-aware model is nested within the weighted Network-SIR baseline.
 For a susceptible node $i$ connected to an infectious neighbour $j$, the one-step transmission probability is
 
 
-$$
-p_{ij}^{\mathrm{inf}}
-=
+$$p_{ij}^{\mathrm{inf}}
+= 
 1-\exp\!\left[
 -\beta_0 w_{ij}
 \widehat{g}_{\alpha}\!\left(\widetilde{F}_{ij}\right)
 \Delta t
-\right].
-$$
+\right].$$
 
 For all infectious neighbours of $i$, the infection probability becomes
 
@@ -387,27 +366,6 @@ Important reproducibility principles are:
 
 These controls help distinguish curvature-dependent structural effects from differences caused by network generation or Monte Carlo variability.
 
-
----
-
-## Scope and Limitations
-
-This framework is designed to investigate the **structural role of network curvature in epidemic dynamics**.
-
-The current experiments do **not** establish:
-
-- predictive superiority over conventional epidemic models;
-- a universally valid curvature-to-transmission relationship;
-- independence of Forman–Ricci curvature from conventional network statistics;
-- a universal epidemiological threshold;
-- the effectiveness of specific interventions such as vaccination or contact tracing; or
-- real-time epidemic forecasting capability.
-
-For the unweighted synthetic networks, Forman–Ricci curvature is deterministically related to endpoint degree. The synthetic experiments should therefore be interpreted as analyses of the curvature-based transmission construction across different network architectures, rather than evidence that curvature provides information independent of degree.
-
-The empirical analysis uses one aggregated high-school contact network and does not calibrate the model against an observed epidemic trajectory. It is therefore interpreted as a structural sensitivity analysis rather than predictive validation.
-
-The curvature-to-transmission mappings are phenomenological. Mapping-robustness experiments test sensitivity to the assumed functional form but do not determine which mapping is epidemiologically correct.
 
 ---
 
